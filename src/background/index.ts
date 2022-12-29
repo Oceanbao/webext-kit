@@ -1,0 +1,30 @@
+import "@plasmohq/messaging/background"
+
+import windowChanger from "./injected-helper"
+
+const inject = async (tabId) => {
+  chrome.scripting.executeScript(
+    {
+      target: {
+        tabId
+      },
+      world: "MAIN", // MAIN in order to access the window object
+      func: windowChanger
+    },
+    () => {
+      console.log("Background script got callback after injection")
+    }
+  )
+}
+
+// Simple example showing how to inject.
+// You can inject however you'd like to, doesn't have
+// to be with chrome.tabs.onActivated
+chrome.tabs.onActivated.addListener((e) => {
+  inject(e.tabId)
+})
+
+chrome.runtime.onMessage.addListener((msg) => {
+  console.log(`[background]: onMessage: msg - ${msg}`)
+  console.log(`[background]: onMessage: msg.text - ${msg.text}`)
+})
