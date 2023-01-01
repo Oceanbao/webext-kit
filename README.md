@@ -31,3 +31,22 @@ This should create a production bundle for your extension, ready to be zipped an
 ## Submit to the webstores
 
 The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
+
+## Guide
+
+### Secret Management and Authentication
+
+- If content script needs to talk to a server, sending request from it will usually not work, as its request still bound by host page's CORS
+- More, collecting credentials or storing the authentication secrets in content-script is bad as page's DOM and storage APIs shared
+
+Secure Flows
+
+- Collect user's credential in a trusted user interface, such as a popup page or options page. (anything chrome-extension://ID)
+- Authenticate with the credentials from trusted page.
+- Store the authentication token with `chrome.storage API`
+- Now background service worker can access secret and send authenticated requests to server
+- Content script can indirectly send authenticated requests via message relay
+- 1. Content script uses extension message API to send a message to background indicating type of auth-request to send
+- 2. Background script accesses the token from storage and sends auth-request
+- 3. Upon response, background script collects it and sends it back up to the requesting content script
+- 4. Content script receives response payload via message API

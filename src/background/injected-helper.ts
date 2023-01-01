@@ -16,7 +16,9 @@ const windowChanger = (): void => {
 
   // Here's an example where we show you can reference the DOM
   // This console.log will show within the tab you injected into
-  console.log(document.getElementsByTagName("html"))
+  console.log(
+    `Injected Script acceessing DOM: ${document.getElementsByTagName("html")}`
+  )
 }
 
 export default windowChanger
